@@ -12,7 +12,7 @@ function bubbleS($pole){
             }
         }
     }
-    while( $swapped );
+    while($swapped);
     return $pole;
 }
 
