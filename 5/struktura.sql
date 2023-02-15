@@ -36,3 +36,10 @@ CREATE TABLE Herci_filmu (
   FOREIGN KEY (ID_herce) REFERENCES Herci(ID_herce),
   FOREIGN KEY (ID_filmu) REFERENCES Filmy(ID_filmu)
 );
+
+CREATE VIEW herci_v_filmech AS
+SELECT h.jmeno_herce, h.prijmeni_herce, f.nazev_filmu
+FROM Herci h
+JOIN Herci_filmu hf ON h.ID_herce = hf.ID_herce
+JOIN Filmy f ON hf.ID_filmu = f.ID_filmu;
+
