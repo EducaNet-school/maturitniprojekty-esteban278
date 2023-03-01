@@ -36,3 +36,33 @@ CREATE TABLE Herci_filmu (
   FOREIGN KEY (ID_herce) REFERENCES Herci(ID_herce),
   FOREIGN KEY (ID_filmu) REFERENCES Filmy(ID_filmu)
 );
+-------------------------------------------------------------
+CREATE FUNCTION nejdelsi_film_v_kategorii(nazev_kategorie VARCHAR(255))
+RETURNS INT
+AS $$
+DECLARE max_delka INT;
+BEGIN
+  SELECT MAX(delka_filmu) INTO max_delka
+  FROM Filmy
+  WHERE ID_kategorie = (SELECT ID_kategorie FROM Kategorie WHERE nazev_kategorie = $1);
+  RETURN max_delka;
+END;
+$$ LANGUAGE plpgsql;
+-------------------------------------------------------------
+
+CREATE PROCEDURE smaz_prazdne_kategorie()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  DELETE FROM Kategorie
+  WHERE NOT EXISTS (SELECT 1 FROM Filmy WHERE Filmy.ID_kategorie = Kategorie.ID_kategorie);
+END;
+$$;
+
+--------------------------------------------------------------
+
+CREATE VIEW filmy_s_poctem_hercu AS
+SELECT f.ID_filmu, f.nazev_filmu, COUNT(hf.ID_herce) AS pocet_hercu
+FROM Filmy f
+JOIN Herci_filmu hf ON f.ID_filmu = hf.ID_filmu
+GROUP BY f.ID_filmu;
